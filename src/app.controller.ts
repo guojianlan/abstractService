@@ -1,20 +1,24 @@
-import { Query } from '@nestjs/common';
-import { Controller, Get, Param } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+
+import { Body, Controller, Post } from '@nestjs/common';
+import { WrapController } from './abstract.typeorm.controller';
 import { AppService } from './app.service';
 import { UserEntity } from './user/entities/user.entity';
 
-@Controller()
-export class AppController {
-  constructor(private readonly appService: AppService) {}
+const CrudController = WrapController<UserEntity>({
+  model: UserEntity,
+  decorators: {
+    findAll: []
+  }
+})
 
-  @Get()
-  async getHello(@Query() query: any): Promise<any> {
-    return this.appService.find(query);
+@Controller()
+export class AppController extends CrudController {
+  constructor(private readonly appService: AppService) {
+    super(appService)
   }
-  @Get(':id')
-  async getId(@Param('id') id: number): Promise<any> {
-    return this.appService.findOne(id);
-  }
+
+  // @Post()
+  // public async create(@Body() body: UserEntity) {
+  //   return 'create'
+  // }
 }

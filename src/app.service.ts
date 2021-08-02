@@ -14,8 +14,6 @@ export class AppService extends AbstractTypeOrmService<UserEntity> {
     super(userRepository);
   }
   public async findOne(id: number): Promise<UserEntity> | never {
-    console.log('findOne');
-
     return await this.queryBuilder()
       .andWhere('id=:id', { id })
       .select(['model.name', 'model.id'])

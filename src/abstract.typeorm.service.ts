@@ -1,5 +1,13 @@
-import { LessThanOrEqual, Repository, SelectQueryBuilder } from 'typeorm';
-
+import { plainToClass } from 'class-transformer';
+import { LessThanOrEqual, Repository, SelectQueryBuilder, MoreThanOrEqual, LessThan, MoreThan, Equal, In, Between } from 'typeorm';
+export const sqlTransformMap = {
+  gte: MoreThanOrEqual,
+  gt: MoreThan,
+  lte: LessThanOrEqual,
+  lt: LessThan,
+  eq: Equal,
+  in: In
+}
 export abstract class AbstractTypeOrmService<T> {
   protected _model: Repository<T>;
 
@@ -28,31 +36,47 @@ export abstract class AbstractTypeOrmService<T> {
     builder: SelectQueryBuilder<T>,
     filterName: string,
     filterValue: string,
-    index?: number,
   ) {
     const sqlSplit = filterValue.split(':');
-    const filterNameKey = index ? filterName + index : filterName;
-    if (sqlSplit[0] == 'or') {
-      if (sqlSplit[1] == 'gte') {
-        builder.orWhere(`model.${filterName} >= :${filterNameKey}`, {
-          [`${filterNameKey}`]: sqlSplit[2],
-        });
+    let [key1, key2OrValue1, value2, ...restValue] = sqlSplit;
+    if (key1 == 'or') {
+      let value;
+      if (restValue) {
+        value = [value2, ...restValue].join(':')
+      } else {
+        value = value2
       }
-      if (sqlSplit[1] == 'lte') {
-        builder.orWhere(`model.${filterName} <= :${filterNameKey}`, {
-          [`${filterNameKey}`]: sqlSplit[2],
-        });
+      let oldValue = value
+      try {
+        value = JSON.parse(value)
+      } catch (error) {
+        value = oldValue
       }
-    }
-    if (sqlSplit[0] == 'gte') {
-      builder.andWhere(`model.${filterName} >= :${filterNameKey}`, {
-        [`${filterNameKey}`]: sqlSplit[1],
-      });
-    }
-    if (sqlSplit[0] == 'lte') {
-      builder.andWhere(`model.${filterName} <= :${filterNameKey}`, {
-        [`${filterNameKey}`]: sqlSplit[1],
-      });
+      if (sqlTransformMap[key2OrValue1]) {
+        builder.orWhere({
+          [`${filterName}`]: sqlTransformMap[key2OrValue1](value)
+        })
+      }
+    } else {
+      let value;
+      if (value2) {
+        value = [key2OrValue1, value2, ...restValue].join(':')
+      } else {
+        value = key2OrValue1
+      }
+      let oldValue = value
+      try {
+        value = JSON.parse(value)
+      } catch (error) {
+        value = oldValue
+      }
+      if (sqlTransformMap[key1]) {
+
+        builder.andWhere({
+          [`${filterName}`]: sqlTransformMap[key1](value)
+        })
+      }
+
     }
   }
   public generateFilterBuilder(builder: SelectQueryBuilder<T>, query?: any) {
@@ -62,31 +86,52 @@ export abstract class AbstractTypeOrmService<T> {
         if (Array.isArray(filter[item])) {
           const value = [...filter[item]];
           value.forEach((childrenItem, index) => {
-            this.realGenerateFilterBuilder(builder, item, childrenItem, index);
+            this.realGenerateFilterBuilder(builder, item, childrenItem);
           });
         } else {
           this.realGenerateFilterBuilder(builder, item, filter[item]);
         }
       });
     }
-    builder.andWhere({
-      sex: LessThanOrEqual(10),
-    });
   }
   public queryBuilder(query?: any) {
     const builder = this._model.createQueryBuilder('model');
-    this.generatePaginationBuilder(builder, query);
-    this.generateFilterBuilder(builder, query);
+    if (query) {
+      this.generatePaginationBuilder(builder, query);
+      this.generateFilterBuilder(builder, query);
+    }
     return builder;
   }
   public async find(query?: any): Promise<any> {
     const builder = this.queryBuilder(query).andWhere('1=1');
     return await builder.getManyAndCount();
   }
+  public async create(body) {
+    let createBody = this._model.create(body)
+    this._model.save(createBody)
+  }
+  public async update(id, body) {
+    let obj = await this._model.findOne(id);
+    // obj = {
+    //   ...obj,
+    //   ...body,
+    // }
+    
+    console.log('uodate!!')
+    await this._model.update(id,body)
+  }
   public async findOne(id: number, query?: any): Promise<T> {
     return await this.queryBuilder(query)
       .andWhere('id=:id', { id })
       .limit(1)
       .getOne();
+  }
+  public async delete(id: number): Promise<Boolean> {
+    try {
+      await this.queryBuilder().delete().where("id =: id", { id }).execute()
+      return true
+    } catch (error) {
+      return false
+    }
   }
 }
