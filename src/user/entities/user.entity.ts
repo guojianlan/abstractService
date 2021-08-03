@@ -1,10 +1,8 @@
+import { CsBaseEntity } from 'src/base.entity';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('users')
-export class UserEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
-
+export class UserEntity extends CsBaseEntity {
   @Column({ length: 500 })
   name: string;
 
