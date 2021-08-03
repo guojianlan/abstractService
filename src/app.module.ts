@@ -1,8 +1,9 @@
-import { Module } from '@nestjs/common';
+import { Module, ValidationPipe } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserEntity } from './user/entities/user.entity';
+import { APP_FILTER, APP_PIPE } from '@nestjs/core';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -19,6 +20,10 @@ import { UserEntity } from './user/entities/user.entity';
     TypeOrmModule.forFeature([UserEntity]),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, {
+    provide: APP_PIPE,
+    useClass: ValidationPipe,
+  }]
+
 })
-export class AppModule {}
+export class AppModule { }
