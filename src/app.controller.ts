@@ -1,24 +1,17 @@
 
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { WrapController } from './abstract.typeorm.controller';
 import { AppService } from './app.service';
-import { UserEntity } from './user/entities/user.entity';
+import { UserEntity } from './user';
 
-const CrudController = WrapController<UserEntity>({
-  model: UserEntity,
-  decorators: {
-    findAll: []
-  }
-})
 
 @Controller()
-export class AppController extends CrudController {
+export class AppController {
   constructor(private readonly appService: AppService) {
-    super(appService)
-  }
 
-  // @Post()
-  // public async create(@Body() body: UserEntity) {
-  //   return 'create'
-  // }
+  }
+  @Get()
+  public test() {
+    return this.appService.getHello()
+  }
 }

@@ -1,22 +1,25 @@
-import { Body, Delete, Get, Param, Patch, Post } from "@nestjs/common"
+import { Body, Delete, Get, Param, Patch, Post, Put } from "@nestjs/common"
 import { AbstractTypeOrmService } from "./abstract.typeorm.service"
 import { PartialType } from '@nestjs/mapped-types'
-export interface AbstractControllerOptions<T> {
-    model: any;
-    decorators?: {
-        findAll?: Array<MethodDecorator | PropertyDecorator>,
-        findOne?: Array<MethodDecorator | PropertyDecorator>,
-        [key: string]: Array<MethodDecorator | PropertyDecorator>,
-    }
+import { DeepPartial } from "typeorm";
+export interface Idecorators {
+    findAll?: Array<MethodDecorator | PropertyDecorator>,
+    findOne?: Array<MethodDecorator | PropertyDecorator>,
+    [key: string]: Array<MethodDecorator | PropertyDecorator>,
+
 }
-function WrapDecorators(decorators) {
+export type AbstractControllerOptions<T> = {
+    model: any;
+    decorators?: Idecorators
+}
+function WrapDecorators(decorators: Idecorators) {
     return <TFunction extends Function, Y>(
         target: TFunction | object,
         propertyKey?: string | symbol,
         descriptor?: TypedPropertyDescriptor<Y>,
     ) => {
         if (decorators) {
-            let wrapDecorators = decorators[propertyKey];
+            let wrapDecorators = decorators[propertyKey as string];
             if (wrapDecorators) {
                 for (const decorator of wrapDecorators) {
                     if (decorator) {
@@ -51,6 +54,7 @@ export function WrapController<T>(options: AbstractControllerOptions<T>): any {
         @Get()
         @WrapDecorators(options.decorators)
         public async findAll() {
+            console.log(123123132)
             return this._service.find();
         }
         @WrapDecorators(options.decorators)
@@ -64,7 +68,7 @@ export function WrapController<T>(options: AbstractControllerOptions<T>): any {
             return this._service.create(body);
         }
         @WrapDecorators(options.decorators)
-        @Patch(':id')
+        @Put(':id')
         public async update(@Param() id: number, @Body() body: updateDto) {
             return this._service.update(id, body)
         }

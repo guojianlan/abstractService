@@ -2,22 +2,26 @@ import { Module, ValidationPipe } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UserEntity } from './user/entities/user.entity';
-import { APP_FILTER, APP_PIPE } from '@nestjs/core';
+import { UserEntity, UserRepository } from './user';
+import { ArticleEntity } from './article'
+import { APP_PIPE } from '@nestjs/core';
+import { ArticleModule } from './article/article.module';
+import { UserModule } from './user/user.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: 'localhost',
-      port: +'33001',
-      username: 'user',
-      database: 'blog',
-      password: '111111',
+      type: 'mysql',
+      host: '127.0.0.1',
+      port: +'3306',
+      username: 'root',
+      database: 'test',
+      password: '5201314qv',
       logging: true,
-      entities: [UserEntity],
+      entities: [UserEntity, ArticleEntity],
       synchronize: true,
     }),
-    TypeOrmModule.forFeature([UserEntity]),
+    UserModule,
+    ArticleModule
   ],
   controllers: [AppController],
   providers: [AppService, {

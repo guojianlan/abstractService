@@ -1,5 +1,4 @@
-import { plainToClass } from 'class-transformer';
-import { LessThanOrEqual, Repository, SelectQueryBuilder, MoreThanOrEqual, LessThan, MoreThan, Equal, In, Between } from 'typeorm';
+import { LessThanOrEqual, Repository, SelectQueryBuilder, MoreThanOrEqual, LessThan, MoreThan, Equal, In, Between, DeepPartial, InsertResult, EntityTarget } from 'typeorm';
 export const sqlTransformMap = {
   gte: MoreThanOrEqual,
   gt: MoreThan,
@@ -10,9 +9,11 @@ export const sqlTransformMap = {
 }
 export abstract class AbstractTypeOrmService<T> {
   protected _model: Repository<T>;
+  protected _entity: EntityTarget<T>
 
-  constructor(model: Repository<T>) {
+  constructor(model: Repository<T>, _entity: EntityTarget<T>) {
     this._model = model;
+    this._entity = _entity;
   }
   public generatePaginationBuilder(
     builder: SelectQueryBuilder<T>,
@@ -106,19 +107,13 @@ export abstract class AbstractTypeOrmService<T> {
     const builder = this.queryBuilder(query).andWhere('1=1');
     return await builder.getManyAndCount();
   }
-  public async create(body) {
+  public async create(body): Promise<T[] | InsertResult> {
     let createBody = this._model.create(body)
-    this._model.save(createBody)
+    return await this._model.save(createBody)
   }
-  public async update(id, body) {
-    let obj = await this._model.findOne(id);
-    // obj = {
-    //   ...obj,
-    //   ...body,
-    // }
-    
-    console.log('uodate!!')
-    await this._model.update(id,body)
+  public async update(id, body): Promise<T> {
+    let entity = await this._model.findOne(id)
+    return await this._model.save(Object.assign(entity, body))
   }
   public async findOne(id: number, query?: any): Promise<T> {
     return await this.queryBuilder(query)
