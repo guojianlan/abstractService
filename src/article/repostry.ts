@@ -8,10 +8,8 @@ export class ArticleRepository extends WrapAbstractTypeOrmRepostry<ArticleEntity
         where: {
             dtime: Equal(0),
         },
-       
-        order:{ctime:-1}
     },
-    
+
 }) {
 
 }

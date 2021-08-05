@@ -1,11 +1,11 @@
 import { Column, Entity, EntityRepository, FindConditions, FindManyOptions, PrimaryGeneratedColumn, Repository } from 'typeorm';
 import { IsString, IsInt } from 'class-validator';
-import { CSBaseEntity } from 'src/base.entity';
+import { CsBaseEntity } from 'src/base.entity';
 import { UserEntity } from 'src/user';
 
 
 @Entity('article')
-export class ArticleEntity extends CSBaseEntity {
+export class ArticleEntity extends CsBaseEntity {
 
     @IsString()
     @Column({ length: 500 })
