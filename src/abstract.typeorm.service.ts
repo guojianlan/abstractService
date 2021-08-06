@@ -129,7 +129,6 @@ export abstract class AbstractTypeOrmService<T> {
     return await this._model.save(Object.assign(entity, body));
   }
   public async findOne(id: number, query?: any): Promise<T> {
-    this._model;
     return await (this._model as any).mFindOne(id, query);
   }
   public async delete(id: number): Promise<boolean> {
