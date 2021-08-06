@@ -2,8 +2,8 @@ import { Module, ValidationPipe } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UserEntity, UserRepository } from './user';
-import { ArticleEntity } from './article'
+import { UserEntity } from './user';
+import { ArticleEntity } from './article';
 import { APP_PIPE } from '@nestjs/core';
 import { ArticleModule } from './article/article.module';
 import { UserModule } from './user/user.module';
@@ -14,20 +14,22 @@ import { UserModule } from './user/user.module';
       host: '127.0.0.1',
       port: +'3306',
       username: 'root',
-      database: 'test',
-      password: '5201314qv',
+      database: 'test-tt',
+      password: '123456',
       logging: true,
       entities: [UserEntity, ArticleEntity],
       synchronize: true,
     }),
     UserModule,
-    ArticleModule
+    ArticleModule,
   ],
   controllers: [AppController],
-  providers: [AppService, {
-    provide: APP_PIPE,
-    useClass: ValidationPipe,
-  }]
-
+  providers: [
+    AppService,
+    {
+      provide: APP_PIPE,
+      useClass: ValidationPipe,
+    },
+  ],
 })
-export class AppModule { }
+export class AppModule {}

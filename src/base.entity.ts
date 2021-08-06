@@ -1,3 +1,3 @@
-import { AbstractTyoeEntity } from './abstract.typeorm.base.entity';
+import { AbstractTypeEntity } from './abstract.typeorm.base.entity';
 
-export class CsBaseEntity extends AbstractTyoeEntity {}
+export class CsBaseEntity extends AbstractTypeEntity {}

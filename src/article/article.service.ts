@@ -1,15 +1,16 @@
-import { BadRequestException } from '@nestjs/common';
 import { Injectable } from '@nestjs/common';
+import {
+  mergeRepositories,
+  WrapAbstractTypeOrmRepositoryMethods,
+} from 'src/abstract.typeorm.repository';
+import { Repository } from 'typeorm';
 import { AbstractTypeOrmService } from '../abstract.typeorm.service';
 import { ArticleEntity, ArticleRepository } from '../article';
 
-
 @Injectable()
 export class ArticleService extends AbstractTypeOrmService<ArticleEntity> {
-  constructor(
-    private readonly repository: ArticleRepository,
-  ) {
-    super(repository, ArticleEntity);
+  constructor(private readonly repository: ArticleRepository) {
+    super(repository as any, ArticleEntity);
   }
   public async findOne(id: number): Promise<ArticleEntity> | never {
     return await this.queryBuilder()
@@ -19,7 +20,6 @@ export class ArticleService extends AbstractTypeOrmService<ArticleEntity> {
       .getOneOrFail();
   }
   getArticle(): Promise<ArticleEntity[]> {
-    return this.repository.mfind()
+    return this.repository.mFind();
   }
-
 }
