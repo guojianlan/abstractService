@@ -3,6 +3,7 @@ import {
     Column,
     BeforeInsert,
     BeforeUpdate,
+    AfterLoad,
 } from 'typeorm';
 export abstract class AbstractTypeEntity {
     @PrimaryGeneratedColumn()
@@ -31,5 +32,11 @@ export abstract class AbstractTypeEntity {
     updateMtime() {
         console.log('BeforeUpdate');
         this.mtime = ~~(+new Date() / 1000);
+    }
+    @AfterLoad()
+    fixTimeToMicroTime() {
+        this.ctime = this.ctime * 1000
+        this.mtime = this.mtime * 1000
+        this.dtime = this.dtime * 1000
     }
 }

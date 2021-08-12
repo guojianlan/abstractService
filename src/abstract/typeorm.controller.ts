@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/ban-types */
 import { Body, Delete, Get, Param, Post, Put } from '@nestjs/common';
-import { AbstractTypeOrmService } from './abstract.typeorm.service';
+import { AbstractTypeOrmService } from './typeorm.service';
 import { PartialType } from '@nestjs/mapped-types';
 export interface IDecorators {
     findAll?: Array<MethodDecorator | PropertyDecorator>;

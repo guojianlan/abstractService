@@ -1,9 +1,9 @@
 import { IsNumber, IsOptional, IsString } from 'class-validator';
-import { CsBaseEntity } from 'src/base.entity';
+import { AbstractTypeEntity } from '../abstract/typeorm.base.entity';
 import { Column, Entity } from 'typeorm';
 
 @Entity('users')
-export class UserEntity extends CsBaseEntity {
+export class UserEntity extends AbstractTypeEntity {
   @IsString()
   @Column({ length: 500 })
   name: string;

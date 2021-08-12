@@ -1,25 +1,22 @@
-import { BadRequestException } from '@nestjs/common';
 import { Injectable } from '@nestjs/common';
-import {
-  mergeRepositories,
-  WrapAbstractTypeOrmRepositoryMethods,
-} from 'src/abstract.typeorm.repository';
-import { MoreThan } from 'typeorm';
-import { AbstractTypeOrmService } from '../abstract.typeorm.service';
-import { UserEntity, UserRepository } from '../user';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { AbstractTypeOrmService } from '../abstract/typeorm.service';
+import { UserEntity } from './entity';
 
 @Injectable()
 export class UserService extends AbstractTypeOrmService<UserEntity> {
-  constructor(private readonly repository: UserRepository) {
-    super(repository as any, UserEntity);
+
+  constructor(@InjectRepository(UserEntity) private readonly repository: Repository<UserEntity>) {
+    super(repository, UserEntity);
   }
-  getUsers(): Promise<UserEntity[]> {
-    return this.repository.mFind();
-  }
-  getUsersOne(): Promise<UserEntity> {
-    return this.repository.mFindOne(2, {});
-  }
-  getUsersOneT() {
-    return this.repository.findOne(2);
-  }
+  // getUsers(): Promise<UserEntity[]> {
+  //   return this.repository.mFind();
+  // }
+  // getUsersOne(): Promise<UserEntity> {
+  //   return this.repository.mFindOne();
+  // }
+  // getUsersOneT() {
+  //   return this.repository.findOne(2);
+  // }
 }

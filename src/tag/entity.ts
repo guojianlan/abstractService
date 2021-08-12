@@ -1,10 +1,10 @@
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, CreateDateColumn } from 'typeorm';
 import { IsString, IsInt } from 'class-validator';
 import { AbstractTypeEntity } from '../abstract/typeorm.base.entity';
 import { UserEntity } from '../user/entity';
 
-@Entity('article')
-export class ArticleEntity extends AbstractTypeEntity {
+@Entity('tag')
+export class TagEntity extends AbstractTypeEntity {
   @IsString()
   @Column({ length: 500 })
   title: string;
@@ -14,4 +14,6 @@ export class ArticleEntity extends AbstractTypeEntity {
   user_id: number;
 
   anthor!: UserEntity;
+  @CreateDateColumn()
+  create_at: Date
 }
