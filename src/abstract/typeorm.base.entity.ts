@@ -1,42 +1,35 @@
 import {
-    PrimaryGeneratedColumn,
-    Column,
-    BeforeInsert,
-    BeforeUpdate,
-    AfterLoad,
+  PrimaryGeneratedColumn,
+  Column,
+  BeforeInsert,
+  BeforeUpdate,
+  AfterLoad,
 } from 'typeorm';
 export abstract class AbstractTypeEntity {
-    @PrimaryGeneratedColumn()
-    id: number;
-    @Column({
-        type: 'int',
-        default: 0,
-    })
-    ctime: number;
-    @Column({
-        type: 'int',
-        default: 0,
-    })
-    mtime: number;
-    @Column({
-        type: 'int',
-        default: 0,
-    })
-    dtime: number;
-    @BeforeInsert()
-    initCtimeAndMtime() {
-        this.ctime = ~~(+new Date() / 1000);
-        this.mtime = ~~(+new Date() / 1000);
-    }
-    @BeforeUpdate()
-    updateMtime() {
-        console.log('BeforeUpdate');
-        this.mtime = ~~(+new Date() / 1000);
-    }
-    @AfterLoad()
-    fixTimeToMicroTime() {
-        this.ctime = this.ctime * 1000
-        this.mtime = this.mtime * 1000
-        this.dtime = this.dtime * 1000
-    }
+  @PrimaryGeneratedColumn()
+  id: number;
+  @Column({
+    type: 'int',
+    default: 0,
+  })
+  ctime: number;
+  @Column({
+    type: 'int',
+    default: 0,
+  })
+  mtime: number;
+  @Column({
+    type: 'int',
+    default: 0,
+  })
+  dtime: number;
+  @BeforeInsert()
+  initCtimeAndMtime() {
+    this.ctime = ~~(+new Date() / 1000);
+    this.mtime = ~~(+new Date() / 1000);
+  }
+  @BeforeUpdate()
+  updateMtime() {
+    this.mtime = ~~(+new Date() / 1000);
+  }
 }

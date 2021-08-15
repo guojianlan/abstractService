@@ -1,5 +1,5 @@
 import { IsNumber, IsOptional, IsString } from 'class-validator';
-import { AbstractTypeEntity } from '../abstract/typeorm.base.entity';
+import { AbstractTypeEntity } from 'nestjs-abstract-module';
 import { Column, Entity } from 'typeorm';
 
 @Entity('users')

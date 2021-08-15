@@ -27,7 +27,7 @@ export abstract class AbstractTypeOrmService<T> {
   protected _model: Repository<T>;
   protected _entity: EntityTarget<T>;
   protected builder: SelectQueryBuilder<T>
-  constructor(model: Repository<T>, _entity: EntityTarget<T>, options?: any) {
+  constructor(model: Repository<T>, _entity: EntityTarget<T>) {
     this._model = model;
     this._entity = _entity;
     this.builder = this._model.createQueryBuilder('model');
@@ -119,14 +119,11 @@ export abstract class AbstractTypeOrmService<T> {
     return builder;
   }
   public async addDeleteConditon(builder: SelectQueryBuilder<T>) {
-    builder.andWhere({
-      dtime: 0
-    })
+    builder
     return builder
   }
   public async find(query?: any): Promise<any> {
-    let builder = this.queryBuilder(query).andWhere('1=1');
-    this.addDeleteConditon(builder)
+    const builder = this.queryBuilder(query).andWhere('1=1');
     return await builder.getManyAndCount();
   }
 
@@ -138,17 +135,8 @@ export abstract class AbstractTypeOrmService<T> {
     const entity = await this._model.findOne(id);
     return await this._model.save(Object.assign(entity, body));
   }
-  public async findOne(id: number, query?: any): Promise<T | boolean> {
-    try {
-      let builder = this.queryBuilder(query).andWhere('1=1');
-      builder.whereInIds(id);
-      this.addDeleteConditon(builder)
-      let result = await builder.getOneOrFail();
-      return result
-    } catch (error) {
-      return false
-    }
-
+  public async findOne(id: number, query?: any): Promise<T> {
+    return await (this._model as any).findOne(id)
   }
   public async delete(id: number): Promise<any> {
     try {
