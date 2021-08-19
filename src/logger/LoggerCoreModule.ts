@@ -1,4 +1,5 @@
 import {
+  ConsoleLogger,
   DynamicModule,
   Global,
   Inject,
@@ -10,6 +11,7 @@ import { PARAMS_PROVIDER_TOKEN, WINSTON_TOKEN, InjectWinston } from "./contants"
 import { Logger } from "./LoggerService";
 import { Params, ParmasAsync } from "./params";
 import { init } from "./initWinston";
+import { NextFunction, Request, Response } from "express";
 @Global()
 @Module({})
 export class LoggerCoreModule implements NestModule {
@@ -61,11 +63,22 @@ export class LoggerCoreModule implements NestModule {
     });
   }
   constructor(
-    @Inject(PARAMS_PROVIDER_TOKEN) private readonly params: any,
+    @Inject(PARAMS_PROVIDER_TOKEN) private readonly params: Params,
     @InjectWinston() private readonly logger: Logger
   ) { }
-  configure() {
+  configure(consumer: MiddlewareConsumer) {
     console.log(this.params);
-    this.logger.log('1234444')
+    if (this.params.logHttp) {
+      if (typeof this.params.logHttp == 'boolean') {
+        // 如果是boolean，直接使用middleware记录
+        consumer.apply((req: Request, res: Response, next: NextFunction) => {
+          console.log(req.baseUrl);
+          next()
+        }).forRoutes('*')
+      } else {
+
+      }
+    }
+
   }
 }

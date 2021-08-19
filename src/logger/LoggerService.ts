@@ -7,10 +7,10 @@ export class Logger implements LoggerService {
   }
   log(message: string) {
     console.log(message, "LoggerService");
-    container.get('xx').error(message)
+    container.get('asd').info(message)
   }
-  error(){
-    console.log(123)
+  error(message,){
+    container.get('asd').error(message)
   }
   warn(){
 

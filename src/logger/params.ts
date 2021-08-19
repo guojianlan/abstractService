@@ -1,13 +1,11 @@
 import { ModuleMetadata } from "@nestjs/common/interfaces";
-import * as winston from 'winston'
-export type WinstonClass = {
-  format: typeof winston.format,
-  transports: typeof winston.transports
-}
-export type winstonParsme = { id: string, options?: winston.LoggerOptions }[]
+import * as winstonClass from 'winston'
+export type winstonParsme = { id: string, options?: winstonClass.LoggerOptions }[]
 export interface Params {
-  logHttp?: {}
-  initWinston?: (winston: WinstonClass) => Promise<winstonParsme> | winstonParsme
+  logHttp?: {
+    container:string
+  } | boolean
+  initWinston?: (winston: typeof winstonClass) => Promise<winstonParsme> | winstonParsme
 }
 
 export interface ParmasAsync extends Pick<ModuleMetadata, "imports"> {

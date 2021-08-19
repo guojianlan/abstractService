@@ -9,7 +9,8 @@ export class UserService {
     @InjectWinston() private readonly logger: Logger
   ) { }
   getUsers() {
-    this.logger.log('123')
+
+    this.logger.error('user-123123')
     throw new HttpException('asd', HttpStatus.FORBIDDEN)
   }
   // getUsersOne(): Promise<UserEntity> {

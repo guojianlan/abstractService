@@ -7,18 +7,9 @@ import { Logger, LoggerModule } from './logger'
 @Module({
   imports: [
     LoggerModule.forRoot({
-      logHttp: true,
+     logHttp:true,
       initWinston: async (winston) => {
-        const { format } = winston;
-        const { json, combine } = format
-        console.log(json,combine)
-        new winston.transports.Console
-        return [{
-          id: "asd",
-          options: {
-
-          }
-        }]
+        return []
       }
     }),
     UserModule,
